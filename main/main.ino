@@ -7,9 +7,9 @@
  * @author DBIBIH OUSSAMA
  */
 
-#include "LedStatus.h"
-#include "CapteurStatus.h"
-#include "OledStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\LedStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\CapteurStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\OledStatus.h"
 
 // Définition des broches
 #define SENSOR_PIN 18  // Pin du capteur infrarouge (IR) d'évitement d'obstacle
