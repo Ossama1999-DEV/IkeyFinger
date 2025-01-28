@@ -8,12 +8,20 @@
  * @note This class is used to define the LedStatus properties.
  */
 
+#include "LedStatus.h"
 #include <Arduino.h>
 
-#define LED_ROUGE 19   // LED rouge pour signaler la présence d'obstacle
-#define LED_VERTE 17   // LED verte pour signaler l'absence d'obstacle
+// Constructeur
+LedStatus::LedStatus(int rougePin, int vertePin)
+    : ledRougePin(rougePin), ledVertePin(vertePin) {}
 
-void SetUp_Led(){
-    pinMode(LED_ROUGE, OUTPUT);  // LED rouge en sortie
-    pinMode(LED_VERTE, OUTPUT);  // LED verte en sortie
+// Configuration des LEDs
+void LedStatus::setupLED() {
+    pinMode(ledRougePin, OUTPUT);
+    pinMode(ledVertePin, OUTPUT);
+}
+
+// Change l'état d'une LED
+void LedStatus::setLedState(int led, int state) {
+    digitalWrite(led, state);
 }

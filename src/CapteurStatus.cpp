@@ -1,5 +1,5 @@
 /**
- * @file Capteur_ESP32.cpp
+ * @file CapteurStatus.cpp
  * @brief This file contains the definition of the Capteur_ESP32 class.
  * @details This class is used to define the Capteur_ESP32 properties.
  * @version 1.0
@@ -8,22 +8,18 @@
  * @note This class is used to define the Capteur_ESP32 properties.
  */
 
-#include "Capteur_ESP32.h"
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
+#include "CapteurStatus.h"
+#include <Arduino.h>
 
-void SetUp_Capteur(){
-    pinMode(SENSOR_PIN, INPUT);  // Capteur IR en entrée
+// Constructeur
+Capteur_ESP32::Capteur_ESP32(int pin) : sensorPin(pin) {}
+
+// Configuration du capteur
+void Capteur_ESP32::setUpCapteur() {
+    pinMode(sensorPin, INPUT);
 }
 
-/**
- * @brief Get the State object
- * @return int 
- */
-int Get_State(){
-    int state = digitalRead(SENSOR_PIN);
-    if (state == LOW)  // Obstacle détecté
-        return state;
-    else
-        return -1;
+// Récupération de l'état du capteur
+int Capteur_ESP32::getState() {
+    return digitalRead(sensorPin);
 }

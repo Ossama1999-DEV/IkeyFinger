@@ -1,5 +1,5 @@
 /**!
- * @file ESP32_OLED.cpp
+ * @file OledStatus.cpp
  * @brief This file contains the definition of the ESP32_OLED class.
  * @details This class is used to define the OLED screen properties and display information such as time, date, and states.
  * @version 1.0
