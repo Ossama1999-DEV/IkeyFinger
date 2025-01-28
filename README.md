@@ -14,7 +14,7 @@ Ce projet utilise un capteur d'empreintes digitales avec une carte Arduino pour 
     ```sh
     git clone <URL_DU_DEPOT>
     ```
-2. Ouvrez le fichier `FingerPrint.ino` avec l'IDE Arduino.
+2. Ouvrez le fichier `iKeyFinger.ino` avec l'IDE Arduino.
 3. Connectez votre Arduino à votre ordinateur.
 4. Téléversez le code sur votre Arduino.
 
