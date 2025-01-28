@@ -8,7 +8,7 @@
  * @note This class is used to define the LedStatus properties.
  */
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\LedStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\LedStatus.h"
 #include <Arduino.h>
 
 // Constructeur

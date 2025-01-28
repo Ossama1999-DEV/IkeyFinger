@@ -7,8 +7,10 @@
  * @author DBIBIH OUSSAMA
  */
 
-#ifndef HS_INC_CAPTEUR_ESP32_H_
-#define HS_INC_CAPTEUR_ESP32_H_
+#ifndef CapteurStatus_h
+#define CapteurStatus_h
+
+#include <Arduino.h>
 
 class Capteur_ESP32
 {
@@ -21,4 +23,5 @@ class Capteur_ESP32
         int getState();          // Retourne l'état du capteur
 };
 
-#endif  // HS_INC_CAPTEUR_ESP32_H_
+#endif  // CapteurStatus_h
+

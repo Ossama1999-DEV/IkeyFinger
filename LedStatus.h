@@ -7,8 +7,8 @@
  * @author DBIBIH OUSSAMA
  */
 
-#ifndef HS_INC_LEDSTATUS_H_
-#define HS_INC_LEDSTATUS_H_
+#ifndef LedStatus_h
+#define LedStatus_h
 
 class LedStatus
 {
@@ -22,4 +22,5 @@ class LedStatus
         void setLedState(int led, int state);   // Change l'état d'une LED
 };
 
-#endif  // HS_INC_LEDSTATUS_H_
+
+#endif  // LedStatus_h

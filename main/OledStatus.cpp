@@ -8,7 +8,7 @@
  * @note This class is designed for ESP32 projects with OLED displays.
  */
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\OledStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\OledStatus.h"
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 
