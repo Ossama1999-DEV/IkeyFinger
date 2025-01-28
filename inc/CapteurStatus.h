@@ -1,5 +1,5 @@
 /**
- * @file Capteur_ESP32.h
+ * @file 
  * @brief This file contains the declaration of the Capteur_ESP32 class.
  * @details This class is used to define the Capteur_ESP32 properties.
  * @version 1.0
