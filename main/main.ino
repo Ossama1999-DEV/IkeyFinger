@@ -1,61 +1,124 @@
-/**
- * @file main.ino
- * @brief This file contains the definition of the main function.
- * @details This file contains the main logic to control the LEDs, OLED, and sensor.
- * @version 1.0
- * @date 2025-01-27
- * @author DBIBIH OUSSAMA
- */
+#include <WiFi.h>
+#include <WebServer.h>
+#include <DNSServer.h>
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\LedStatus.h"
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\CapteurStatus.h"
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\OledStatus.h"
 
-// Définition des broches
-#define SENSOR_PIN 18  // Pin du capteur infrarouge (IR) d'évitement d'obstacle
-#define LED_ROUGE 19   // LED rouge pour signaler la présence d'obstacle
-#define LED_VERTE 17   // LED verte pour signaler l'absence d'obstacle
-#define BUZZER_PIN -1  // Ajoutez cette ligne si vous prévoyez un buzzer
+// Définition des paramètres du réseau WiFi
+const char* ssid = "OussamaEsp32";    // Nom du réseau WiFi (SSID)
+const char* password = "123456789";    // Mot de passe WiFi
 
-// Instanciation des classes
-LedStatus led(LED_ROUGE, LED_VERTE);       // Objet pour gérer les LEDs
-Capteur_ESP32 capteur(SENSOR_PIN);         // Objet pour gérer le capteur
-ESP32_OLED oled;                           // Objet pour gérer l'OLED
+// Définition de la LED
+#define LED_PIN 19  // LED branchée sur GPIO 19
+bool etatLed = false; // État initial de la LED
 
-void setup() {
-  // Initialiser les composants
-  Serial.begin(9600);          // Communication série pour le débogage
-  led.setupLED();              // Configure les LEDs
-  capteur.setUpCapteur();      // Configure le capteur
-  oled.setUpOled();            // Configure l'écran OLED
+// Création du serveur Web
+WebServer server(80);
 
-  // Afficher l'état initial sur l'OLED
-  oled.Menu("12:00 PM", "2025-01-27", "READY", '*');  // État initial : READY
-  led.setLedState(LED_ROUGE, HIGH);  // Allume la LED rouge en permanence
+// Page HTML stockée en mémoire
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 LED Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; color: #333; }
+        .container { margin-top: 50px; }
+        h1 { color: #007BFF; }
+        .status { font-size: 24px; margin: 20px 0; font-weight: bold; }
+        .button { font-size: 20px; padding: 15px; border: none; cursor: pointer; border-radius: 5px; transition: 0.3s; margin: 10px; width: 150px; }
+        .on { background-color: #28a745; color: white; }
+        .off { background-color: #dc3545; color: white; }
+        .button:hover { transform: scale(1.1); }
+    </style>
+    <script>
+        function toggleLED(state) {
+            fetch("/" + state)  // Corrigé pour envoyer les requêtes "/on" et "/off"
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("led-status").innerText = data;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Contrôle de la LED ESP32</h1>
+        <p class="status">LED est <span id="led-status">%STATE%</span></p>
+        <button class="button on" onclick="toggleLED('on')">Allumer</button>
+        <button class="button off" onclick="toggleLED('off')">Éteindre</button>
+    </div>
+</body>
+</html>
+)rawliteral";
+
+// Fonction pour mettre à jour l'état de la LED dans la page HTML
+String processor(const String& var) {
+    if (var == "STATE") {
+        return (etatLed) ? "ALLUMÉE" : "ÉTEINTE";
+    }
+    return "";
 }
 
+// Gestion de la page principale
+void handleRoot() {
+    String page = index_html;
+    page.replace("%STATE%", (etatLed) ? "ALLUMÉE" : "ÉTEINTE");
+    server.send(200, "text/html", page);
+}
+
+// Allumer la LED
+void handleOn() {
+    etatLed = false;  // <-- Change de "true" à "false"
+    digitalWrite(LED_PIN, LOW);  // <-- Change de "HIGH" à "LOW"
+    server.send(200, "text/plain", "ALLUMÉE");
+}
+
+// Éteindre la LED
+void handleOff() {
+    etatLed = true;  // <-- Change de "false" à "true"
+    digitalWrite(LED_PIN, HIGH);  // <-- Change de "LOW" à "HIGH"
+    server.send(200, "text/plain", "ÉTEINTE");
+}
+
+DNSServer dnsServer;
+const byte DNS_PORT = 53;
+
+// Configuration initiale
+void setup() {
+    Serial.begin(115200);
+    Serial.println("Démarrage de l'ESP32 en mode Point d'Accès...");
+
+    // Démarrage du WiFi en mode AP
+    bool success = WiFi.softAP(ssid, password);
+
+    if (success) {
+        Serial.println("WiFi AP démarré !");
+        Serial.print("Adresse IP du serveur : ");
+        Serial.println(WiFi.softAPIP());
+    } else {
+        Serial.println("Échec de la création du WiFi AP !");
+    }
+
+    // Configuration du DNS captif
+    dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());  // Redirige toutes les requêtes vers l'ESP32
+
+    // Configurer la LED
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+
+    // Définir les routes du serveur Web
+    server.on("/", handleRoot);
+    server.on("/on", handleOn);
+    server.on("/off", handleOff);
+
+    // Démarrer le serveur Web
+    server.begin();
+}
+
+// Boucle principale
 void loop() {
-  // Vérifie l'état du capteur
-  int state = capteur.getState();
-
-  if (state == LOW) {  // Obstacle détecté
-    // Allume la LED verte et éteint la rouge
-    led.setLedState(LED_ROUGE, LOW);
-    led.setLedState(LED_VERTE, HIGH);
-
-    // Affiche "OPEN" sur l'OLED
-    oled.Menu("12:00 PM", "2025-01-27", "OPEN", '*');
-
-    // Maintient la LED verte allumée pendant 3 secondes
-    delay(3000);
-
-    // Restaure l'état initial
-    led.setLedState(LED_VERTE, LOW);
-    led.setLedState(LED_ROUGE, HIGH);
-
-    // Affiche "READY" sur l'OLED
-    oled.Menu("12:00 PM", "2025-01-27", "READY", '*');
-  }
-
-  delay(100); // Petite pause pour éviter les lectures trop rapides
+    dnsServer.processNextRequest();  // Gère les requêtes DNS
+    server.handleClient();  // Gère les requêtes HTTP
 }
