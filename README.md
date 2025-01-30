@@ -12,7 +12,7 @@ Ce projet utilise un capteur d'empreintes digitales avec une carte Arduino pour 
 ## Installation
 1. Clonez ce dépôt sur votre machine locale.
     ```sh
-    git clone <URL_DU_DEPOT>
+    git clone https://github.com/Ossama1999-DEV/IkeyFinger.git
     ```
 2. Ouvrez le fichier `iKeyFinger.ino` avec l'IDE Arduino.
 3. Connectez votre Arduino à votre ordinateur.
@@ -30,4 +30,4 @@ Les contributions sont les bienvenues ! Veuillez soumettre une pull request pour
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
 ## Auteurs
-- [DBIBIH OUSSAMA](https://github.com/votreprofil)
+- [DBIBIH OUSSAMA](https://github.com/Ossama1999-DEV)

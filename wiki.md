@@ -8,7 +8,7 @@ Pour installer ce projet, suivez les étapes ci-dessous :
 
 1. Clonez le dépôt :
     ```
-    git clone https://github.com/votre-utilisateur/votre-projet.git
+    git clone https://github.com/Ossama1999-DEV/IkeyFinger.git
     ```
 2. Accédez au répertoire du projet :
     ```
