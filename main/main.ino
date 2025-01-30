@@ -35,7 +35,7 @@ const char login_page[] PROGMEM = R"rawliteral(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Login</title>
+    <title>Login.page</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; color: #333; }
         .container { margin-top: 100px; max-width: 300px; margin-left: auto; margin-right: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
@@ -86,7 +86,7 @@ const char control_page[] PROGMEM = R"rawliteral(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OUSSAMA Contrôle</title>
+    <title>login.page</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; color: #333; }
         .container { margin-top: 50px; }
@@ -243,6 +243,7 @@ void setup() {
 
 // Boucle principale
 void loop() {
+    Serial.println("Run!");
     dnsServer.processNextRequest();
     server.handleClient();
 }
