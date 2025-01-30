@@ -1,6 +1,12 @@
 /**
- * ESP32 Web Server - Contrôle de la LED à distance avec Authentification
+ * @file main.ino
+ * @brief Programme principal pour contrôler une LED et une porte avec un ESP32
+ * @author Oussama DBIBIH
+ * @date 2021-09-15
+ * @version 1.0
  */
+
+/* Library */
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
