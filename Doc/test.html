@@ -32,20 +32,34 @@
                 document.getElementById("door-status").innerText = data;
             });
         }
+
+        function logout() {
+            localStorage.removeItem("esp32_auth"); // Supprime la session
+            window.location.href = "/"; // Retourne à la page de connexion
+        }
+
+        // Vérifie si l'utilisateur est connecté
+        if (localStorage.getItem("esp32_auth") !== "true") {
+            window.location.href = "/";
+        }
     </script>
 </head>
 <body>
     <div class="container">
-        <img src="gifDoor.gif" alt="Image or GIF" style="width: 100px; height: auto;">
-        <h1>Light</h1>
-        <p class="status">LED is <span id="led-status">%STATE%</span></p>
-        <button class="button on" onclick="toggleLED('on')">ON</button>
-        <button class="button off" onclick="toggleLED('off')">OFF</button>
+        <h1>ESP32 Contrôle</h1>
+        
+        <h2>LED</h2>
+        <p class="status">État LED: <span id="led-status">%STATE%</span></p>
+        <button class="button on" onclick="toggleLED('on')">Allumer</button>
+        <button class="button off" onclick="toggleLED('off')">Éteindre</button>
 
-        <h1>Door</h1>
-        <p class="status">Door is <span id="door-status">%STATE%</span></p>
-        <button class="button open" onclick="toggleDoor('open')">OPEN</button>
-        <button class="button close" onclick="toggleDoor('close')">CLOSE</button>
+        <h2>Porte</h2>
+        <p class="status">État Porte: <span id="door-status">%STATE%</span></p>
+        <button class="button open" onclick="toggleDoor('open')">Ouvrir</button>
+        <button class="button close" onclick="toggleDoor('close')">Fermer</button>
+
+        <br><br>
+        <button class="button close" onclick="logout()">🔒 Déconnexion</button>
     </div>
 </body>
 </html>
