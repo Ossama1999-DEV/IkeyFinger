@@ -7,56 +7,53 @@
  * @author DBIBIH OUSSAMA
  */
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\OledStatus.h"
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\OledStatus.h"
 
-// Dimensions de l'écran OLED
-#define SCREEN_WIDTH 128 // Largeur de l'écran OLED en pixels
-#define SCREEN_HEIGHT 64 // Hauteur de l'écran OLED en pixels
-#define OLED_RESET -1    // Pas de broche de reset (ou -1 si partagé)
+Adafruit_SSD1306 OledStatus::display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// Initialisation de l'objet OLED
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+OledStatus::OledStatus() {}
 
-// Constructeur
-ESP32_OLED::ESP32_OLED() {
-  // Le constructeur peut rester vide ou inclure une configuration si nécessaire
+void OledStatus::initOLED() {
+    Wire.begin(SDA_PIN, SCL_PIN);
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+        Serial.println("Échec de l'initialisation de l'OLED !");
+        for (;;);
+    }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(20, 10);
+    display.println("Welcome");
+    display.display();
 }
 
-// Méthode pour initialiser l'OLED
-void ESP32_OLED::setUpOled() {
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {  // Adresse I2C 0x3C
-    for (;;); // Bloque si l'initialisation échoue
-  }
-  display.clearDisplay();
-  display.display();
+void OledStatus::displayMessage(const char* message) {
+    display.clearDisplay();
+    display.setCursor(20, 10);
+    display.println(message);
+    display.display();
 }
 
-// Méthode pour afficher le menu
-void ESP32_OLED::Menu(const char* time, const char* date, const char* state, char logo_key) {
-  display.clearDisplay(); // Efface l'écran
+void OledStatus::displayStatus(const char* time, const char* date, const char* status) {
+    display.clearDisplay();
+    
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
 
-  // Affiche l'heure
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(5, 5);
-  display.print("Time: ");
-  display.print(time);
+    // Affichage de l'heure
+    display.setCursor(10, 5);
+    display.print("Time: ");
+    display.print(time);
 
-  // Affiche la date
-  display.setCursor(5, 20);
-  display.print("Date: ");
-  display.print(date);
+    // Affichage de la date
+    display.setCursor(10, 20);
+    display.print("Date: ");
+    display.print(date);
 
-  // Affiche un logo ou une clé (symbolique)
-  display.setCursor(100, 5);
-  display.print(logo_key);
+    // Affichage de l'état
+    display.setTextSize(2);
+    display.setCursor(30, 40);
+    display.print(status);
 
-  // Affiche l'état (OPEN/CLOSED)
-  display.setTextSize(2);
-  display.setCursor(30, 40);
-  display.print(state);
-
-  display.display(); // Met à jour l'écran
+    display.display();
 }

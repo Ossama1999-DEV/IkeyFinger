@@ -8,18 +8,15 @@
  * @note This class is used to define the Capteur_ESP32 properties.
  */
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\CapteurStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\CapteurStatus.h"
 #include <Arduino.h>
 
-// Constructeur
-Capteur_ESP32::Capteur_ESP32(int pin) : sensorPin(pin) {}
+CapteurStatus::CapteurStatus(int pin) : capteurPin(pin) {}
 
-// Configuration du capteur
-void Capteur_ESP32::setUpCapteur() {
-    pinMode(sensorPin, INPUT);
+void CapteurStatus::setUpCapteur() {
+    pinMode(capteurPin, INPUT);
 }
 
-// Récupération de l'état du capteur
-int Capteur_ESP32::getState() {
-    return digitalRead(sensorPin);
+int CapteurStatus::getState() {
+    return digitalRead(capteurPin);
 }
