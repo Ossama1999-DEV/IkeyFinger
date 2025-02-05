@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login.page</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; color: #333; }
+        .container { margin-top: 100px; max-width: 300px; margin-left: auto; margin-right: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        h1 { color: #007BFF; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .button { width: 100%; padding: 10px; border: none; cursor: pointer; border-radius: 5px; transition: 0.3s; background-color: #007BFF; color: white; font-size: 16px; }
+        .button:hover { background-color: #0056b3; }
+        .error { color: red; font-weight: bold; display: none; }
+    </style>
+    <script>
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            
+            fetch("/login?user=" + username + "&pass=" + password)
+            .then(response => response.text())
+            .then(data => {
+                if (data === "SUCCESS") {
+                    localStorage.setItem("esp32_auth", "true");
+                    window.location.href = "/control";
+                } else {
+                    document.getElementById("error-message").style.display = "block";
+                }
+            });
+        }
+
+        if (localStorage.getItem("esp32_auth") === "true") {
+            window.location.href = "/control";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 HOME Login</h1>
+        <input type="text" id="username" placeholder="Nom d'utilisateur">
+        <input type="password" id="password" placeholder="Mot de passe">
+        <p class="error" id="error-message">Login ou mot de passe incorrect</p>
+        <button class="button" onclick="login()">Se connecter</button>
+    </div>
+</body>
+</html>

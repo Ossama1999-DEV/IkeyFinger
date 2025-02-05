@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login.page</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f4; color: #333; }
+        .container { margin-top: 50px; }
+        h1 { color: #007BFF; }
+        .status { font-size: 24px; margin: 20px 0; font-weight: bold; }
+
+        /* STYLE DES BOUTONS */
+        .button { font-size: 20px; padding: 15px; border: none; cursor: pointer; border-radius: 5px; transition: 0.3s; margin: 10px; width: 150px; }
+        .on { background-color: #28a745; color: white; }
+        .off { background-color: #dc3545; color: white; }
+        .open { background-color: #ffc107; color: white; }
+        .close { background-color: #6c757d; color: white; }
+        .button:hover { transform: scale(1.1); }
+
+        /* LED INTERACTIVE */
+        .led {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 20px auto;
+            background-color: grey;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .led.on { background-color: yellow; box-shadow: 0px 0px 20px yellow; }
+
+        /* PORTE INTERACTIVE */
+        .door-container {
+            width: 100px;
+            height: 150px;
+            border: 4px solid black;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .door {
+            width: 100%;
+            height: 100%;
+            background-color: brown;
+            position: absolute;
+            left: 0;
+            transition: transform 1s;
+        }
+        .door.open { transform: translateX(100%); }
+    </style>
+
+    <script>
+        function toggleLED(state) {
+            fetch("/" + state)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("led-status").innerText = data;
+                let led = document.getElementById("led-indicator");
+                led.classList.toggle("on", state === "on");
+            });
+        }
+
+        function toggleDoor(state) {
+            fetch("/door/" + state)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("door-status").innerText = data;
+                let door = document.getElementById("door");
+                door.classList.toggle("open", state === "open");
+            });
+        }
+
+        function logout() {
+            localStorage.removeItem("esp32_auth");
+            window.location.href = "/";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>💡 Light Control</h1>
+        <div class="led" id="led-indicator"></div>
+        <p class="status">LED is <span id="led-status">OFF</span></p>
+        <button class="button on" onclick="toggleLED('on')">Turn ON</button>
+        <button class="button off" onclick="toggleLED('off')">Turn OFF</button>
+
+        <h1>🚪 Door Control</h1>
+        <div class="door-container">
+            <div class="door" id="door"></div>
+        </div>
+        <p class="status">Door is <span id="door-status">CLOSED</span></p>
+        <button class="button open" onclick="toggleDoor('open')">OPEN</button>
+        <button class="button close" onclick="toggleDoor('close')">CLOSE</button>
+        <br><br>
+        <button class="button close" onclick="logout()">🔒 Déconnexion</button>
+    </div>
+</body>
+</html>
