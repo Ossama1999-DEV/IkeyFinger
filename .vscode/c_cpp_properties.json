@@ -20,17 +20,17 @@
       "name": "Arduino",
       "includePath": [
         "${workspaceFolder}/**",
-        "C:/path/to/Arduino/libraries/**"
+        "C:/Users/asus/OneDrive/Documents/Arduino/libraries/**"
       ],
       "browse": {
         "path": [
           "${workspaceFolder}",
-          "C:/path/to/Arduino/libraries"
+          "C:/Users/asus/OneDrive/Documents/Arduino/libraries/"
         ],
         "limitSymbolsToIncludedHeaders": true
       },
       "intelliSenseMode": "gcc-x64",
-      "compilerPath": "C:/path/to/your/compiler"
+      "compilerPath": "C:/MinGW/bin/gcc.exe"
     }
   ],
   "version": 4
