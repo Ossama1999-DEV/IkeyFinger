@@ -15,6 +15,22 @@
       "cStandard": "c11",
       "cppStandard": "gnu++14",
       "intelliSenseMode": "windows-gcc-x86"
+    },
+    {
+      "name": "Arduino",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/path/to/Arduino/libraries/**"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}",
+          "C:/path/to/Arduino/libraries"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "C:/path/to/your/compiler"
     }
   ],
   "version": 4
