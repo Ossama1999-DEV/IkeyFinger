@@ -1,3 +1,7 @@
+'''
+    This is a project management tool for ESP32 & Fingerprint Sensor
+'''
+
 # Author: DBIBIH  OUSSAMA
 # Date: 2021-07-01
 # Version: 1.0
@@ -16,7 +20,9 @@ import matplotlib.pyplot as plt
 
 
 def afficher_graphique():
-    """Affiche un graphique basé sur les valeurs saisies pour chaque jour de la semaine."""
+    """Affiche un graphique basé sur les valeurs
+    saisies pour chaque
+    jour de la semaine."""
     try:
         # Récupération des valeurs saisies pour chaque jour de la semaine
         valeurs_par_jour = {}
@@ -26,7 +32,9 @@ def afficher_graphique():
                 "Qualité": [int(entry.get()) for entry in entries["Qualité"]],
                 "Temps": [int(entry.get()) for entry in entries["Temps"]],
                 "Humains": [int(entry.get()) for entry in entries["Humains"]],
-                "Gestion": [entry.get().strip().upper() for entry in entries["Gestion"]],
+                "Gestion": [
+                    entry.get().strip().upper() for entry in entries["Gestion"]
+                ],
             }
 
         # Vérification des valeurs des indicateurs
@@ -35,18 +43,18 @@ def afficher_graphique():
                        valeurs["Temps"] + valeurs["Humains"]):
                 messagebox.showerror(
                     "Erreur",
-                    f"Veuillez entrer des valeurs entre 1 et 5 pour les indicateurs de qualité ({jour_semaine})."
+                    f"Veuillez entrer des valeurs en 1 et 5 ({jour_semaine})."
                 )
                 return
             if not all(v in ["OK", "KO"] for v in valeurs["Gestion"]):
                 messagebox.showerror(
                     "Erreur",
-                    f"Veuillez entrer 'OK' ou 'KO' pour la gestion du projet ({jour_semaine})."
+                    f"Veuillez entrer 'OK' ou 'KO' ({jour_semaine})."
                 )
                 return
 
         # Création des graphiques pour chaque jour
-        for jour, valeurs in valeurs_par_jour.items():
+        for jour_semaine, valeurs in valeurs_par_jour.items():
             plt.figure(figsize=(10, 6))
             for i, (categorie, data) in enumerate(valeurs.items()):
                 if categorie != "Gestion":
@@ -62,7 +70,7 @@ def afficher_graphique():
             plt.show()
 
     except ValueError:
-        messagebox.showerror("Erreur", "Veuillez entrer des valeurs numériques valides.")
+        messagebox.showerror("Erreur", "Veuillez entrer: valeurs numériques")
 
 
 # Création de l'interface Tkinter
@@ -79,13 +87,16 @@ jours_semaine = [
 sections = {
     "Coûts": ["Budget actuel", "Budget prévisionnel", "Budget de vente"],
     "Qualité": [
-        "Sensibilité capteur", "Temps de réaction", "Niveau détection", "Sécurité", "Résistance"
+        "Sensibilité capteur", "Temps de réaction", "Niveau détection",
+        "Sécurité", "Résistance"
     ],
     "Temps": [
-        "Comparaison dates", "Jours restants", "Jours travaillés", "Présences dequipes"
+        "Comparaison dates", "Jours restants", "Jours travaillés",
+        "Présences dequipes"
     ],
     "Humains": [
-        "Charge de travail", "Satisfaction des employés", "Formation reçue", "Communication interne"
+        "Charge de travail", "Satisfaction des employés", "Formation reçue",
+        "Communication interne"
     ],
     "Gestion": ["Management de projet (OK/KO)", "Délai de livraison (OK/KO)"]
 }
@@ -112,6 +123,6 @@ for jour in jours_semaine:
         entries_par_jour[jour][section] = section_entries
 
 # Bouton pour afficher le graphique
-ttk.Button(root, text="Afficher le graphique", command=afficher_graphique).pack(pady=10)
+ttk.Button(root, text="Graphique", command=afficher_graphique).pack(pady=10)
 
 root.mainloop()
