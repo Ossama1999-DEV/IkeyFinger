@@ -8,7 +8,7 @@
  * @note This class is used to define the Capteur_ESP32 properties.
  */
 
-#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\inc\CapteurStatus.h"
+#include "C:\Users\asus\OneDrive\Documents\Arduino\IkeyFinger\Project\inc\CapteurStatus.h"
 #include <Arduino.h>
 
 CapteurStatus::CapteurStatus(int pin) : capteurPin(pin) {}
