@@ -1,7 +1,7 @@
 # IKeyFinger Project
 
 ## Description
-Ce projet utilise un capteur d'empreintes digitales avec une carte Arduino pour authentifier les utilisateurs. Il permet d'enregistrer, de vérifier et de supprimer des empreintes digitales.
+Ce projet utilise un capteur d'empreintes digitales avec une carte ESP32 pour authentifier les utilisateurs. Il permet d'enregistrer, de vérifier et de supprimer des empreintes digitales.
 
 ## Matériel requis
 - ESP32 Developement Board
