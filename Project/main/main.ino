@@ -10,6 +10,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
+#include "relay.h"
 
 // Définition des identifiants de connexion
 const char* validUser = "admin";
@@ -27,6 +28,10 @@ bool etatLed = false; // État initial de la LED
 WebServer server(80);
 DNSServer dnsServer;
 const byte DNS_PORT = 53;
+
+// Pin Relay and button
+#define BUTTON_PIN 22  // ESP32 GPIO22 connecté au bouton
+#define RELAY_PIN  27  // ESP32 GPIO27 connecté au relais
 
 // Page HTML de connexion
 const char login_page[] PROGMEM = R"rawliteral(
@@ -221,8 +226,43 @@ void handleOff() {
     server.send(200, "text/plain", "ALLUMÉE");  // Mise à jour de l'affichage
 }
 
+// Ajoute ces fonctions et routes à ton main.ino
 
-// Configuration initiale
+// Gestion de l'ouverture du relais (serrure)
+void handleDoorOpen() {
+    ActiveRelay(LOW);  // Active le relais (porte ouverte)
+    server.send(200, "text/plain", "OPENED");
+}
+
+// Gestion de la fermeture du relais (serrure)
+void handleDoorClose() {
+    ActiveRelay(HIGH); // Désactive le relais (porte fermée)
+    server.send(200, "text/plain", "CLOSED");
+}
+
+// Gestion du bouton physique pour le relais (en parallèle)
+void handlePhysicalButton(){
+    static unsigned long lastDebounceTime = 0;
+    static bool lastButtonState = HIGH;
+
+    bool buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != lastButtonState) {
+        lastDebounceTime = millis();
+        lastButtonState = buttonState;
+    }
+
+    if ((millis() - lastDebounceTime) > 50) {  // anti-rebond
+        if (buttonState == LOW) {
+            ActiveRelay(LOW);  // ouvre
+            Serial.println("Button pressed: Door OPEN");
+        } else {
+            ActiveRelay(HIGH); // ferme
+            Serial.println("Button released: Door CLOSED");
+        }
+    }
+}
+
+// Modification dans la fonction setup()
 void setup() {
     Serial.begin(115200);
     WiFi.softAP(ssid, password);
@@ -232,18 +272,28 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, LOW);
 
+    pinMode(BUTTON_PIN, INPUT_PULLUP); // bouton physique
+
     server.on("/", handleRoot);
     server.on("/login", handleLogin);
     server.on("/control", handleControl);
     server.on("/on", handleOn);
     server.on("/off", handleOff);
 
+    // Routes pour contrôle WiFi du relais
+    server.on("/door/open", handleDoorOpen);
+    server.on("/door/close", handleDoorClose);
+
+    SetUpRelay();
+
     server.begin();
 }
 
-// Boucle principale
+// Modification dans loop()
 void loop() {
-    Serial.println("Run!");
     dnsServer.processNextRequest();
     server.handleClient();
+
+    handlePhysicalButton(); // lecture en continu du bouton physique
 }
+
