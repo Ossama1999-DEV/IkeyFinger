@@ -11,6 +11,7 @@
 #include <WebServer.h>
 #include <DNSServer.h>
 #include "relay.h"
+#include "CpEmprinte.h"
 
 // Définition des identifiants de connexion
 const char* validUser = "admin";
@@ -286,6 +287,8 @@ void setup() {
 
     SetUpRelay();
 
+    setupEmprinte(); // Initialiser capteur d'empreintes
+
     server.begin();
 }
 
@@ -294,6 +297,13 @@ void loop() {
     dnsServer.processNextRequest();
     server.handleClient();
 
-    handlePhysicalButton(); // lecture en continu du bouton physique
+      // Vérifier périodiquement l'empreinte
+  if (CheckEmprinte()) {
+    ActiveRelay(LOW); // Ouvre la porte si empreinte reconnue
+    delay(5000);      // Ouvre pendant 5 secondes
+    ActiveRelay(HIGH);// Referme après
+  }
+
+    // handlePhysicalButton(); // lecture en continu du bouton physique
 }
 
