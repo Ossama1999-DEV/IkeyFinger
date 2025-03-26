@@ -289,6 +289,8 @@ void setup() {
 
     setupEmprinte(); // Initialiser capteur d'empreintes
 
+    SetEmprinte();
+
     server.begin();
 }
 
