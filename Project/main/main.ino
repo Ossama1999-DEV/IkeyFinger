@@ -10,6 +10,9 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <DNSServer.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <ezButton.h>
 #include "relay.h"
 #include "CpEmprinte.h"
 
