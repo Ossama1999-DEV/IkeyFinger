@@ -25,6 +25,28 @@ const char* password = "123456789"; // Mot de passe WiFi
 #define LED_PIN 19  // LED branchée sur GPIO 19
 bool etatLed = false; // État initial de la LED
 
+#define SCREEN_WIDTH 128 // OLED display width,  in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1); // create SSD1306 display object connected to I2C
+ezButton button(27);  // create ezButton object that attach to the ESP32 pin GPIO27
+unsigned long lastCount = 0;
+// Function to display "OPEN"
+void displayDoorOpen() {
+    oled.clearDisplay();
+    oled.setCursor(0, 10);
+    oled.println("OPEN");
+    oled.display();
+  }
+  
+  // Function to display "CLOSE"
+  void displayDoorClose() {
+    oled.clearDisplay();
+    oled.setCursor(0, 10);
+    oled.println("CLOSE");
+    oled.display();
+  }
+
 // Création du serveur Web
 WebServer server(80);
 DNSServer dnsServer;
@@ -268,30 +290,44 @@ void setup() {
     Serial.begin(115200);
     WiFi.softAP(ssid, password);
 
-    dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
+  // initialize OLED display with address 0x3C for 128x64
+  if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    while (true);
+  }
 
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
+  delay(2000);         // wait for initializing
+  oled.clearDisplay(); // clear display
 
-    pinMode(BUTTON_PIN, INPUT_PULLUP); // bouton physique
+  oled.setTextSize(2);          // text size
+  oled.setTextColor(WHITE);     // text color
+  oled.setCursor(0, 10);        // position to display
 
-    server.on("/", handleRoot);
-    server.on("/login", handleLogin);
-    server.on("/control", handleControl);
-    server.on("/on", handleOn);
-    server.on("/off", handleOff);
+  button.setDebounceTime(50); // set debounce time to 50 milliseconds
+  button.setCountMode(COUNT_FALLING);
 
-    // Routes pour contrôle WiFi du relais
-    server.on("/door/open", handleDoorOpen);
-    server.on("/door/close", handleDoorClose);
+  displayDoorClose(); // Default state
 
-    SetUpRelay();
+  dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
 
-    setupEmprinte(); // Initialiser capteur d'empreintes
+   pinMode(LED_PIN, OUTPUT);
+   digitalWrite(LED_PIN, LOW);
 
-    SetEmprinte();
+   pinMode(BUTTON_PIN, INPUT_PULLUP); // bouton physique
 
-    server.begin();
+   server.on("/", handleRoot);
+   server.on("/login", handleLogin);
+   server.on("/control", handleControl);
+   server.on("/on", handleOn);
+   server.on("/off", handleOff);
+
+   // Routes pour contrôle WiFi du relais
+   
+   server.on("/door/open", handleDoorOpen);
+   server.on("/door/close", handleDoorClose);
+   SetUpRelay();
+   setupEmprinte(); // Initialiser capteur d'empreintes
+   server.begin();
 }
 
 // Modification dans loop()
@@ -299,11 +335,13 @@ void loop() {
     dnsServer.processNextRequest();
     server.handleClient();
 
-      // Vérifier périodiquement l'empreinte
   if (CheckEmprinte()) {
     ActiveRelay(LOW); // Ouvre la porte si empreinte reconnue
     delay(5000);      // Ouvre pendant 5 secondes
     ActiveRelay(HIGH);// Referme après
+    displayDoorOpen();
+  }else {
+    displayDoorClose();
   }
 
     // handlePhysicalButton(); // lecture en continu du bouton physique
