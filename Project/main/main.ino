@@ -12,9 +12,11 @@
 #include <DNSServer.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <ezButton.h>
 #include "relay.h"
 #include "CpEmprinte.h"
+#include "OledStatus.h"
+
+OledStatus oled; // ✅ Ceci crée une instance de la bonne classe
 
 // Définition des identifiants de connexion
 const char* validUser = "admin";
@@ -28,35 +30,12 @@ const char* password = "123456789"; // Mot de passe WiFi
 #define LED_PIN 19  // LED branchée sur GPIO 19
 bool etatLed = false; // État initial de la LED
 
-#define SCREEN_WIDTH 128 // OLED display width,  in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1); // create SSD1306 display object connected to I2C
-ezButton button(27);  // create ezButton object that attach to the ESP32 pin GPIO27
-unsigned long lastCount = 0;
-// Function to display "OPEN"
-void displayDoorOpen() {
-    oled.clearDisplay();
-    oled.setCursor(0, 10);
-    oled.println("OPEN");
-    oled.display();
-  }
-  
-  // Function to display "CLOSE"
-  void displayDoorClose() {
-    oled.clearDisplay();
-    oled.setCursor(0, 10);
-    oled.println("CLOSE");
-    oled.display();
-  }
-
 // Création du serveur Web
 WebServer server(80);
 DNSServer dnsServer;
 const byte DNS_PORT = 53;
 
 // Pin Relay and button
-#define BUTTON_PIN 22  // ESP32 GPIO22 connecté au bouton
 #define RELAY_PIN  27  // ESP32 GPIO27 connecté au relais
 
 // Page HTML de connexion
@@ -266,66 +245,29 @@ void handleDoorClose() {
     server.send(200, "text/plain", "CLOSED");
 }
 
-// Gestion du bouton physique pour le relais (en parallèle)
-void handlePhysicalButton(){
-    static unsigned long lastDebounceTime = 0;
-    static bool lastButtonState = HIGH;
-
-    bool buttonState = digitalRead(BUTTON_PIN);
-    if (buttonState != lastButtonState) {
-        lastDebounceTime = millis();
-        lastButtonState = buttonState;
-    }
-
-    if ((millis() - lastDebounceTime) > 50) {  // anti-rebond
-        if (buttonState == LOW) {
-            ActiveRelay(LOW);  // ouvre
-            Serial.println("Button pressed: Door OPEN");
-        } else {
-            ActiveRelay(HIGH); // ferme
-            Serial.println("Button released: Door CLOSED");
-        }
-    }
-}
-
 // Modification dans la fonction setup()
 void setup() {
     Serial.begin(115200);
     WiFi.softAP(ssid, password);
 
-  // initialize OLED display with address 0x3C for 128x64
-  if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    while (true);
-  }
+    Serial.begin(115200);
+    oled.initOLED();
+    oled.displayMessage("System Booting...");
+    delay(2000);
 
-  delay(2000);         // wait for initializing
-  oled.clearDisplay(); // clear display
-
-  oled.setTextSize(2);          // text size
-  oled.setTextColor(WHITE);     // text color
-  oled.setCursor(0, 10);        // position to display
-
-  button.setDebounceTime(50); // set debounce time to 50 milliseconds
-  button.setCountMode(COUNT_FALLING);
-
-  displayDoorClose(); // Default state
+    oled.displayDoorClose(); // ✅ appel correct
 
   dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
 
    pinMode(LED_PIN, OUTPUT);
    digitalWrite(LED_PIN, LOW);
 
-   pinMode(BUTTON_PIN, INPUT_PULLUP); // bouton physique
-
    server.on("/", handleRoot);
    server.on("/login", handleLogin);
    server.on("/control", handleControl);
    server.on("/on", handleOn);
    server.on("/off", handleOff);
-
-   // Routes pour contrôle WiFi du relais
-   
+  //WIFI
    server.on("/door/open", handleDoorOpen);
    server.on("/door/close", handleDoorClose);
    SetUpRelay();
@@ -342,9 +284,9 @@ void loop() {
     ActiveRelay(LOW); // Ouvre la porte si empreinte reconnue
     delay(5000);      // Ouvre pendant 5 secondes
     ActiveRelay(HIGH);// Referme après
-    displayDoorOpen();
+    oled.displayDoorOpen();
   }else {
-    displayDoorClose();
+    oled.displayDoorClose();
   }
 
     // handlePhysicalButton(); // lecture en continu du bouton physique

@@ -26,7 +26,9 @@ class OledStatus {
     OledStatus();  
     void initOLED();  
     void displayMessage(const char* message);  
-    void displayStatus(const char* time, const char* date, const char* status); // Nouvelle fonction
+    void displayStatus(const char* time, const char* date, const char* status); 
+    void displayDoorOpen();         // ✅ déplacer ici
+    void displayDoorClose();        // ✅ déplacer ici
   private:
     static Adafruit_SSD1306 display;
 };

@@ -57,3 +57,19 @@ void OledStatus::displayStatus(const char* time, const char* date, const char* s
 
     display.display();
 }
+
+void OledStatus::displayDoorOpen() {
+    display.clearDisplay();
+    display.setCursor(30, 20);
+    display.setTextSize(2);
+    display.println("OPEN");
+    display.display();
+}
+
+void OledStatus::displayDoorClose() {
+    display.clearDisplay();
+    display.setCursor(30, 20);
+    display.setTextSize(2);
+    display.println("CLOSE");
+    display.display();
+}
